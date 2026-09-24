@@ -9,16 +9,16 @@ builder.Services.AddCors(options =>
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             }
-        )
+        );
     }
-)
+);
     
 // Forzar que escuche en http://localhost:5168
 builder.WebHost.UseUrls("http://localhost:5168");
 
 var app = builder.Build();
 
-app.UseCors()
+app.UseCors();
 
 app.MapGet("/",() =>
 {
@@ -42,5 +42,5 @@ app.MapGet("/api/polleria",() =>
     });
 });
 
-var port = Environment.GetEnvironmentVariable("Port")??"10000",
+var port = Environment.GetEnvironmentVariable("Port")??"10000";
 app.Run($"http://0.0.0.0:(port)");
