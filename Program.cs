@@ -1,45 +1,38 @@
 var builder = WebApplication.CreateBuilder(args);
+
+// Agregar servicios de OpenAPI
 builder.Services.AddOpenApi();
-builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(policy =>
-            {
-                policy
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            }
-        );
-    }
-);
+
+// Configurar el puerto local
+builder.WebHost.UseUrls("http://localhost:5168");
 
 var app = builder.Build();
 
-app.UseCors();
-
-app.MapGet("/", () =>
+// Habilitar endpoint de OpenAPI en desarrollo
+if (app.Environment.IsDevelopment())
 {
-    return "API Polleria funcionando";
-});
+    app.MapOpenApi();
+}
 
-app.MapGet("/api/polleria", () =>
+// Ruta principal de prueba
+app.MapGet("/", () => "API Cafeteria funcionando");
+
+// Ruta para obtener el listado de productos de cafetería
+app.MapGet("/api/cafeteria", () =>
 {
-    return Results.Ok(new[]
+    return Results.Ok(new object[]
     {
         new {
             id = 1,
-            codigo = "P001",
-            nombre = "Pollo a la brasa",
+            codigo = "C001",
+            nombre = "Cafe puro"
         },
         new {
-            id = 2,
-            codigo = "P002",
-            nombre = "Pollo broaster",
+            id = 12,
+            codigo = "C002",
+            nombre = "Capuchino"
         }
     });
 });
 
-// Lee la variable de entorno 'PORT' (ideal para deploys como Render/Heroku) o usa 5168 por defecto
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5168";
-
-app.Run($"http://0.0.0.0:{port}");
+app.Run();
