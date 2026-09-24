@@ -1,27 +1,46 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy( policity =>
+            {
+                policity
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            }
+        )
+    }
+)
+    
 // Forzar que escuche en http://localhost:5168
 builder.WebHost.UseUrls("http://localhost:5168");
 
 var app = builder.Build();
 
-app.MapGet("/", () => "API Cafeteria funcionando");
+app.UseCors()
 
-app.MapGet("/api/cafeteria", () =>
+app.MapGet("/",() =>
 {
-    return Results.Ok(new object[]
+    return "API Polleria funcionando";
+});
+
+app.MapGet("/api/polleria",() =>
+{
+    return Results.Ok(new[]
     {
-        new {
-            id = 1,
-            codigo = "C001",
-            nombre = "Cafe puro"
+        new{
+            id=1,
+            codigo="P001",
+            nombre="Pollo a la brasa",
         },
-        new {
-            id = 12,
-            codigo = "C002",
-            nombre = "Capuchino"
+        new{
+            id=2,
+            codigo="P002",
+            nombre="Pollo broaster",
         }
     });
 });
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("Port")??"10000",
+app.Run($"http://0.0.0.0:(port)");
